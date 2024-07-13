@@ -3,6 +3,9 @@ package zju.cst.aces.api.config;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+/**
+ * Model enum
+ */
 public enum Model {
     GPT_3_5_TURBO("gpt-3.5-turbo", new ModelConfig.Builder()
             .withModelName("gpt-3.5-turbo")
@@ -46,6 +49,11 @@ public enum Model {
         return defaultConfig;
     }
 
+    /**
+     * Get model by model name
+     * @param modelName model name
+     * @return model
+     */
     public static Model fromString(String modelName) {
         for (Model model : Model.values()) {
             if (model.getModelName().equalsIgnoreCase(modelName)) {

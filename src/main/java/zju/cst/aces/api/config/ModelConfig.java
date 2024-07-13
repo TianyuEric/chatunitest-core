@@ -2,6 +2,9 @@ package zju.cst.aces.api.config;
 
 import lombok.Data;
 
+/**
+ * ModelConfig
+ */
 @Data
 public class ModelConfig {
     public String modelName;
@@ -20,6 +23,9 @@ public class ModelConfig {
         this.presencePenalty = builder.presencePenalty;
     }
 
+    /**
+     * Builder
+     */
     public static class Builder {
         private String modelName = "gpt-3.5-turbo";
         private String url = "https://api.openai.com/v1/chat/completions";

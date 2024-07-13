@@ -3,6 +3,9 @@ package zju.cst.aces.dto;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
+/**
+ * ChatChoice
+ */
 @Data
 public class ChatChoice {
     Integer index;

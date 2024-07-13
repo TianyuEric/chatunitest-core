@@ -37,6 +37,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * ClassParser is a class to parse class information.
+ * It contains a method to extract class information from a class file.
+ * It uses JavaParser to parse class file.
+ * @see com.github.javaparser.JavaParser
+ * @see zju.cst.aces.dto.ClassInfo
+ */
 public class ClassParser {
     private static final String separator = "_";
     private static Path classOutputPath;

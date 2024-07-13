@@ -20,6 +20,9 @@ import java.util.List;
 
 import static zju.cst.aces.runner.AbstractRunner.runTest;
 
+/**
+ * Phase of the whole process
+ */
 public class Phase {
     Config config;
     public static final String separator = "_";
@@ -31,6 +34,9 @@ public class Phase {
     @AllArgsConstructor
     public class Preparation {
 
+        /**
+         * Execute the preparation phase
+         */
         public void execute() {
             Parser parser = new Parser(new ProjectParser(config), config.getProject(), config.getParseOutput(), config.getLogger());
             process(parser);
@@ -46,6 +52,11 @@ public class Phase {
         ClassInfo classInfo;
         MethodInfo methodInfo;
 
+        /**
+         * Execute the prompt generation phase
+         * @param num test number
+         * @return prompt constructor
+         */
         public PromptConstructorImpl execute(int num) {
             String testName = classInfo.getClassName() + separator + methodInfo.methodName + separator
                     + classInfo.methodSigs.get(methodInfo.methodSignature) + separator + num + separator + "Test";
@@ -77,6 +88,9 @@ public class Phase {
         }
     }
 
+    /**
+     * Test generation phase of the whole process
+     */
     public class TestGeneration {
 
         PromptGenerator promptGenerator;
@@ -84,12 +98,20 @@ public class Phase {
         ClassInfo classInfo;
 
 
+        /**
+         * Set up the test generation phase with prompt info
+         * @param promptInfo prompt info to set up
+         */
         public void setUp(PromptInfo promptInfo) {
             this.promptGenerator = new PromptGenerator(config);
             this.methodInfo = promptInfo.getMethodInfo();
             this.classInfo = promptInfo.getClassInfo();
         }
 
+        /**
+         * Execute the test generation phase with prompt constructor
+         * @param pc prompt constructor to execute
+         */
         public void execute(PromptConstructorImpl pc) {
 
             PromptInfo promptInfo = pc.getPromptInfo();
@@ -146,8 +168,8 @@ public class Phase {
 
         /**
          * Core process to chat with LLM and get code in its response
-         * @param prompt
-         * @param record
+         * @param prompt prompt messages
+         * @param record round record
          * @return unit test code
          */
         public String generateTest(List<ChatMessage> prompt, RoundRecord record) {
@@ -182,6 +204,11 @@ public class Phase {
     @AllArgsConstructor
     public class Validation {
 
+        /**
+         * Execute the validation phase
+         * @param pc prompt constructor
+         * @return true if the test is valid
+         */
         public boolean execute(PromptConstructorImpl pc) {
 
             PromptInfo promptInfo = pc.getPromptInfo();

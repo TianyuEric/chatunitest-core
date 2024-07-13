@@ -33,6 +33,11 @@ import java.util.*;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
+/**
+ * Obfuscator <br>
+ * The main function of the obfuscator is to obfuscate the prompt info, java code, dependency, method brief and test message.
+ * It contains the method to obfuscate prompt info, java code, dependency, method brief and test message
+ */
 @Data
 public class Obfuscator {
 
@@ -58,6 +63,10 @@ public class Obfuscator {
         setTargetGroupIds(config);
     }
 
+    /**
+     * Set target group ids
+     * @param config config
+     */
     //TODO
     public void setTargetGroupIds(Config config) {
         String projectGroupId = config.getProject().getGroupId();
@@ -70,6 +79,11 @@ public class Obfuscator {
         this.targetGroupIds = groupIds;
     }
 
+    /**
+     * Obfuscate prompt info with target group ids
+     * @param promptInfo prompt info
+     * @return obfuscated prompt info
+     */
     public PromptInfo obfuscatePromptInfo(PromptInfo promptInfo) {
         this.symbolFrame = findSymbolFrameByClass(promptInfo.getFullClassName());
         if (this.symbolFrame == null) {
@@ -94,6 +108,11 @@ public class Obfuscator {
         return promptInfo;
     }
 
+    /**
+     * Deobfuscate prompt info
+     * @param brief prompt info
+     * @return deobfuscated prompt info
+     */
     public String obfuscateMethodBrief(String brief) {
         try {
             BodyDeclaration md = StaticJavaParser.parseBodyDeclaration(brief);
@@ -109,6 +128,11 @@ public class Obfuscator {
         return obfuscateString(methodSig);
     }
 
+    /**
+     * Deobfuscate prompt info
+     * @param code prompt info
+     * @return deobfuscated prompt info
+     */
     public String obfuscateMethod(String code) {
         if (code == "") {
             return "";
@@ -124,6 +148,11 @@ public class Obfuscator {
         return obfuscatedCode;
     }
 
+    /**
+     * obfuscate prompt info in java code
+     * @param code prompt info
+     * @return obfuscated prompt info
+     */
     public String obfuscateJava(String code) {
         if (code == "") {
             return "";
@@ -159,6 +188,11 @@ public class Obfuscator {
         return obfuscatedCode;
     }
 
+    /**
+     * Deobfuscate prompt info in java code
+     * @param code prompt info
+     * @return deobfuscated prompt info
+     */
     public String deobfuscateJava(String code) {
         if (code == "") {
             return "";
@@ -194,6 +228,11 @@ public class Obfuscator {
         return obfuscatedCode;
     }
 
+    /**
+     * Obfuscate java code
+     * @param name java code
+     * @return obfuscated java code
+     */
     public String obfuscateName(String name) {
         if (name.contains("\\.")) {
             String[] names = name.split("\\.");
@@ -225,6 +264,11 @@ public class Obfuscator {
         return deobfuscateString(text);
     }
 
+    /**
+     * Obfuscate code
+     * @param str code
+     * @return obfuscated code
+     */
     public String obfuscateString(String str) {
         if (cryptoMap.size() == 0) {
             throw new RuntimeException("Crypto map is empty! Must run obfuscateJava first!");
@@ -240,6 +284,11 @@ public class Obfuscator {
         return str;
     }
 
+    /**
+     * Deobfuscate code
+     * @param str code
+     * @return deobfuscated code
+     */
     public String deobfuscateString(String str) {
         if (cryptoMap.size() == 0) {
             throw new RuntimeException("Crypto map is empty! Must run obfuscateJava first!");
@@ -259,6 +308,11 @@ public class Obfuscator {
         return str;
     }
 
+    /**
+     * Obfuscate dependency
+     * @param dep dependency
+     * @return obfuscated dependency
+     */
     public Map<String, String> obfuscateDep(Map<String, String> dep) {
         Map<String, String> obfuscatedDep = new HashMap<>();
         for (String key : dep.keySet()) {
@@ -274,6 +328,11 @@ public class Obfuscator {
         return obfuscatedDep;
     }
 
+    /**
+     * Deobfuscate dependency
+     * @param dep dependency
+     * @return deobfuscated dependency
+     */
     public Map<String, String> deobfuscateDep(Map<String, String> dep) {
         Map<String, String> deobfuscatedDep = new HashMap<>();
         for (String key : dep.keySet()) {
@@ -298,6 +357,11 @@ public class Obfuscator {
         return msg;
     }
 
+    /**
+     * Encrypt name with Caesar Cipher
+     * @param oldName old name
+     * @return encrypted name
+     */
     private String encryptName(String oldName) {
         if (symbolFrame == null) {
             throw new RuntimeException("Symbol frames are not initialized!");
@@ -327,6 +391,11 @@ public class Obfuscator {
         }
     }
 
+    /**
+     * Encrypt name if it exists in the crypto map
+     * @param oldName old name
+     * @return encrypted name
+     */
     private String encryptIfExist(String oldName) {
         if (symbolFrame == null) {
             throw new RuntimeException("Symbol frames are not initialized!");
@@ -337,6 +406,11 @@ public class Obfuscator {
         return oldName;
     }
 
+    /**
+     * realize the Caesar Cipher method
+     * @param old old name
+     * @return decrypted name
+     */
     // Caesar Cipher
     private String caesarCipher(String old) {
         StringBuilder sb = new StringBuilder();
@@ -354,6 +428,11 @@ public class Obfuscator {
         return sb.toString();
     }
 
+    /**
+     * Decrypt name
+     * @param oldName old name
+     * @return decrypted name
+     */
     private String decryptName(String oldName) {
         if (this.reversedMap == null) {
             this.reversedMap = createReversedMap(this.cryptoMap);
@@ -368,6 +447,10 @@ public class Obfuscator {
         return oldName;
     }
 
+    /**
+     * Generate symbol frames
+     * @return symbol frames
+     */
     // TODO: export to json
     public Map<String, SymbolFrame> generateSymbolFrames() {
         Set<ClassNode> candidateClasses = new HashSet<>();
@@ -397,6 +480,9 @@ public class Obfuscator {
         return symbolFrames;
     }
 
+    /**
+     * Export symbol frame
+     */
     public void exportSymbolFrame() {
         ProjectParser.exportJson(config.getSymbolFramePath(), generateSymbolFrames());
     }
@@ -410,10 +496,20 @@ public class Obfuscator {
         }
     }
 
+    /**
+     * Put crypto map
+     * @param k key
+     * @param v value
+     */
     public void putCryptoMap(String k, String v) {
         this.cryptoMap.put(k, v);
     }
 
+    /**
+     * Create reversed map
+     * @param map map
+     * @return reversed map
+     */
     private Map<String, String> createReversedMap(Map<String, String> map) {
         return map.entrySet()
                 .stream()
@@ -421,6 +517,11 @@ public class Obfuscator {
                 .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (e1, e2) -> e1, LinkedHashMap::new));
     }
 
+    /**
+     * Create all case map
+     * @param map map
+     * @return all case map
+     */
     private Map<String, String> createAllCaseMap(Map<String, String> map) {
         Map<String, String> allCaseMap = new HashMap<>();
         for (String key : map.keySet()) {
@@ -430,6 +531,11 @@ public class Obfuscator {
         return allCaseMap;
     }
 
+    /**
+     * Capitalize the first letter of the string
+     * @param str string
+     * @return capitalized string
+     */
     public static String capitalize(String str) {
         if (str == null || str.isEmpty()) {
             return str;
@@ -437,6 +543,11 @@ public class Obfuscator {
         return Character.toUpperCase(str.charAt(0)) + str.substring(1);
     }
 
+    /**
+     * Decapitalize the first letter of the string
+     * @param str string
+     * @return decapitalized string
+     */
     public static String decapitalize(String str) {
         if (str == null || str.isEmpty()) {
             return str;
@@ -444,12 +555,20 @@ public class Obfuscator {
         return Character.toLowerCase(str.charAt(0)) + str.substring(1);
     }
 
+    /**
+     * Obfuscator visitor
+     */
     private class ObfuscatorVisitor extends VoidVisitorAdapter<Void> {
         public void visit(SimpleName n, Void arg) {
             n.setIdentifier(encryptIfExist(n.getIdentifier()));
             super.visit(n, arg);
         }
 
+        /**
+         * Visit method reference expression
+         * @param n method reference expression
+         * @param arg argument
+         */
         @Override
         public void visit(MethodReferenceExpr n, Void arg) {
             n.setIdentifier(encryptIfExist(n.getIdentifier()));
@@ -457,8 +576,16 @@ public class Obfuscator {
         }
     }
 
+    /**
+     * Deobfuscator visitor
+     */
     private class DeobfuscatorVisitor extends VoidVisitorAdapter<Void> {
 
+        /**
+         * Visit class or interface declaration
+         * @param n class or interface declaration
+         * @param arg argument
+         */
         public void visit(ClassOrInterfaceDeclaration n, Void arg) {
             String className = n.getNameAsString();
             if (className.contains("Test")) {
@@ -467,27 +594,52 @@ public class Obfuscator {
             super.visit(n, arg);
         }
 
+        /**
+         * Visit method declaration
+         * @param n method declaration
+         * @param arg argument
+         */
         public void visit(MethodDeclaration n, Void arg) {
             String methodName = n.getNameAsString();
             n.setName(deobfuscateString(methodName));
             super.visit(n, arg);
         }
 
+        /**
+         * Visit string literal expression
+         * @param n string literal expression
+         * @param arg argument
+         */
         public void visit(StringLiteralExpr n, Void arg) {
             n.setValue(deobfuscateString(n.getValue()));
             super.visit(n, arg);
         }
 
+        /**
+         * Visit line comment
+         * @param n line comment
+         * @param arg argument
+         */
         public void visit(LineComment n, Void arg) {
             n.setContent(deobfuscateString(n.getContent()));
             super.visit(n, arg);
         }
 
+        /**
+         * Visit simple name
+         * @param n simple name
+         * @param arg argument
+         */
         public void visit(SimpleName n, Void arg) {
             n.setIdentifier(decryptName(n.getIdentifier()));
             super.visit(n, arg);
         }
 
+        /**
+         * Visit method reference expression
+         * @param n method reference expression
+         * @param arg argument
+         */
         @Override
         public void visit(MethodReferenceExpr n, Void arg) {
             n.setIdentifier(decryptName(n.getIdentifier()));

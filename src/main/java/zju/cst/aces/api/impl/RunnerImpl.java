@@ -14,6 +14,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
+/**
+ * RunnerImpl implements Runner
+ * Run class or method
+ */
 public class RunnerImpl implements Runner {
     Config config;
 
@@ -21,6 +25,10 @@ public class RunnerImpl implements Runner {
         this.config = config;
     }
 
+    /**
+     * Run class
+     * @param fullClassName full class name
+     */
     public void runClass(String fullClassName) {
         try {
             new ClassRunner(config, fullClassName).start();
@@ -29,6 +37,11 @@ public class RunnerImpl implements Runner {
         }
     }
 
+    /**
+     * Run method
+     * @param fullClassName full class name
+     * @param methodInfo method info
+     */
     public void runMethod(String fullClassName, MethodInfo methodInfo) {
         try {
             new MethodRunner(config, fullClassName, methodInfo).start();

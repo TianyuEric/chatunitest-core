@@ -7,6 +7,13 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Logger implementation using java.util.logging.Logger
+ * It contains methods to log info, warn, error and debug messages
+ * It is used in the API to log messages
+ * @see zju.cst.aces.api.Logger
+ * @see java.util.logging.Logger
+ */
 public class LoggerImpl implements zju.cst.aces.api.Logger {
 
     java.util.logging.Logger log;

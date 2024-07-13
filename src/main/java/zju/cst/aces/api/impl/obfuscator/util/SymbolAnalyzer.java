@@ -10,6 +10,12 @@ import java.io.IOException;
 import java.util.*;
 import java.util.jar.JarFile;
 
+/**
+ * SymbolAnalyzer is a class to analyze the symbol information in the code
+ * It contains the method to analyze class node and method node
+ * It is used in obfuscator to analyze class node and method node
+ * @see zju.cst.aces.api.impl.obfuscator.Obfuscator
+ */
 public class SymbolAnalyzer {
     private static final String jarFile = "";
 
@@ -23,6 +29,11 @@ public class SymbolAnalyzer {
         }
     }
 
+    /**
+     * Analyze class node and return symbol frame
+     * @param classNode class node
+     * @return symbol frame
+     */
     public SymbolFrame analyze(ClassNode classNode) {
         SymbolFrame frame = new SymbolFrame();
         String className = classNode.name;
@@ -39,6 +50,12 @@ public class SymbolAnalyzer {
         return frame;
     }
 
+    /**
+     * Analyze method node and return symbol frame
+     * @param methodNode method node
+     * @param className class name
+     * @return symbol frame
+     */
     public SymbolFrame analyzeMethod(MethodNode methodNode, String className) {
         List<LocalVariableNode> localVariables = new ArrayList<>();
         if (methodNode.localVariables != null) {
@@ -91,6 +108,11 @@ public class SymbolAnalyzer {
         return frame;
     }
 
+    /**
+     * Get line number of instruction
+     * @param insn instruction
+     * @return line number
+     */
     public int getLine(AbstractInsnNode insn) {
         while (insn != null && !(insn instanceof LineNumberNode)) {
             insn = insn.getPrevious();

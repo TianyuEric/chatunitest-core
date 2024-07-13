@@ -2,6 +2,10 @@ package zju.cst.aces.dto;
 
 import lombok.*;
 
+/**
+ * ChatMessage
+ * this class is used to store the chat message
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

@@ -14,6 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
+/**
+ * ClassRunner is a class to generate code from classes.
+ * It contains methods to start the test program and execute the test rounds.
+ */
 public class ClassRunner extends AbstractRunner {
     public ClassInfo classInfo;
     public File infoDir;

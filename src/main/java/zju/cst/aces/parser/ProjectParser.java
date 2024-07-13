@@ -37,6 +37,12 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * ProjectParser is a class to parse the project.
+ * The main method is parse. It uses ClassParser to parse class info.
+ * It also creates a method example map.
+ * @see ClassParser
+ */
 public class ProjectParser {
 
     public static JavaParser parser;

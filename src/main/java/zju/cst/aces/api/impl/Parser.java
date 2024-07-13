@@ -9,6 +9,13 @@ import zju.cst.aces.api.PreProcess;
 
 import java.nio.file.Path;
 
+/**
+ * Parser is a class to parse class info.
+ * It contains a method to parse class info.
+ * It is used in the API to parse class info from the project.
+ * It uses ProjectParser to parse class info.
+ * @see zju.cst.aces.parser.ProjectParser
+ */
 @Data
 public class Parser implements PreProcess {
 
@@ -30,6 +37,9 @@ public class Parser implements PreProcess {
         this.parse();
     }
 
+    /**
+     * Parse class info
+     */
     public void parse() {
         try {
             Task.checkTargetFolder(project);

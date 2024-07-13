@@ -5,6 +5,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * ChatResponse
+ * The main function of this class is to store chat response.
+ * It contains some fields to store chat response.
+ * The chat response includes id, model, created, object, usage, choices.
+ */
 @Data
 public class ChatResponse {
     private String id;

@@ -24,6 +24,9 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * AbstractRunner is an abstract class to run the test.
+ */
 public abstract class AbstractRunner {
 
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
@@ -60,6 +63,11 @@ public abstract class AbstractRunner {
         return response.getContent();
     }
 
+    /**
+     * Export test code to the specified path.
+     * @param code test code
+     * @param savePath path to save the test code
+     */
     public static void exportTest(String code, Path savePath) {
         if (!savePath.toAbsolutePath().getParent().toFile().exists()) {
             savePath.toAbsolutePath().getParent().toFile().mkdirs();
@@ -82,6 +90,12 @@ public abstract class AbstractRunner {
         return "";
     }
 
+    /**
+     * Repair imports of the code. Add necessary imports to the code.
+     * @param code code to repair
+     * @param imports imports to add
+     * @return repaired code
+     */
     public static String repairImports(String code, List<String> imports) {
         try {
             CompilationUnit cu = StaticJavaParser.parse(code);
@@ -98,6 +112,12 @@ public abstract class AbstractRunner {
         }
     }
 
+    /**
+     * Repair package of the code. Change the package name of the code.
+     * @param code code to repair
+     * @param packageName package name to change
+     * @return repaired code
+     */
     public static String repairPackage(String code, String packageName) {
         CompilationUnit cu = StaticJavaParser.parse(code).setPackageDeclaration(packageName);
         return cu.toString();
@@ -133,6 +153,14 @@ public abstract class AbstractRunner {
         return cu.toString();
     }
 
+    /**
+     * Generate prompt information for the method without dependencies.
+     * @param config configuration
+     * @param classInfo class information
+     * @param methodInfo method information
+     * @return prompt information
+     * @throws IOException if an I/O error occurs
+     */
     public static PromptInfo generatePromptInfoWithoutDep(Config config, ClassInfo classInfo, MethodInfo methodInfo) throws IOException {
         PromptInfo promptInfo = new PromptInfo(
                 false,
@@ -173,6 +201,14 @@ public abstract class AbstractRunner {
         return promptInfo;
     }
 
+    /**
+     * Generate prompt information for the method with dependencies.
+     * @param config configuration
+     * @param classInfo class information
+     * @param methodInfo method information
+     * @return prompt information
+     * @throws IOException if an I/O error occurs
+     */
     public static PromptInfo generatePromptInfoWithDep(Config config, ClassInfo classInfo, MethodInfo methodInfo) throws IOException {
         PromptInfo promptInfo = new PromptInfo(
                 true,
@@ -247,6 +283,15 @@ public abstract class AbstractRunner {
         return promptInfo;
     }
 
+    /**
+     * Add method dependencies by depth. Add the dependent methods of the method to the prompt information.
+     * @param config configuration
+     * @param className class name
+     * @param methodSigs method signatures
+     * @param promptInfo prompt information
+     * @param depth depth of the dependency
+     * @throws IOException if an I/O error occurs
+     */
     public static void addMethodDepsByDepth(Config config, String className, Set<String> methodSigs, PromptInfo promptInfo, int depth) throws IOException {
         if (depth <= 1) {
             return;
@@ -270,6 +315,13 @@ public abstract class AbstractRunner {
         }
     }
 
+    /**
+     * Add constructor dependencies by depth. Add the dependent constructors of the class to the prompt information.
+     * @param config configuration
+     * @param classInfo class information
+     * @param promptInfo prompt information
+     * @throws IOException if an I/O error occurs
+     */
     public static void addConstructorDepsByDepth(Config config, ClassInfo classInfo, PromptInfo promptInfo) throws IOException {
         for (Map.Entry<String, Set<String>> entry : classInfo.constructorDeps.entrySet()) {
             String depClassName = entry.getKey();
@@ -278,6 +330,13 @@ public abstract class AbstractRunner {
         }
     }
 
+    /**
+     * Get class information by class name.
+     * @param config configuration
+     * @param className class name
+     * @return class information
+     * @throws IOException if an I/O error occurs
+     */
     public static ClassInfo getClassInfo(Config config, String className) throws IOException {
         try {
             String fullClassName = Task.getFullClassName(config, className);
@@ -291,6 +350,14 @@ public abstract class AbstractRunner {
         }
     }
 
+    /**
+     * Get method information by class information. Get the method information by method signature.
+     * @param config configuration
+     * @param info class information
+     * @param mSig method signature
+     * @return method information
+     * @throws IOException if an I/O error occurs
+     */
     public static MethodInfo getMethodInfo(Config config, ClassInfo info, String mSig) throws IOException {
         String packagePath = info.getPackageName()
                 .replace("package ", "")
@@ -306,6 +373,14 @@ public abstract class AbstractRunner {
         return GSON.fromJson(Files.readString(depMethodInfoPath, StandardCharsets.UTF_8), MethodInfo.class);
     }
 
+    /**
+     * Get dependent information. Get the dependent information by class name and dependent methods.
+     * @param config configuration
+     * @param depClassName dependent class name
+     * @param depMethods dependent methods
+     * @return dependent information
+     * @throws IOException if an I/O error occurs
+     */
     public static String getDepInfo(Config config, String depClassName, Set<String> depMethods) throws IOException {
         ClassInfo depClassInfo = getClassInfo(config, depClassName);
         if (depClassInfo == null) {
@@ -343,6 +418,14 @@ public abstract class AbstractRunner {
         return basicInfo + getterSetter + sourceDepMethods + "}";
     }
 
+    /**
+     * Get method bodies. Get the method bodies by configuration, class information, and method signatures.
+     * @param config configuration
+     * @param info class information
+     * @param sigs method signatures
+     * @return method bodies
+     * @throws IOException if an I/O error occurs
+     */
     public static String getBodies(Config config, ClassInfo info, List<String> sigs) throws IOException {
         String bodies = "";
         for (String sig : sigs) {
@@ -351,11 +434,25 @@ public abstract class AbstractRunner {
         return bodies;
     }
 
+    /**
+     * Get method body. Get the method body by configuration, class information, and method signature.
+     * @param config configuration
+     * @param info class information
+     * @param Sig method signature
+     * @return method body
+     * @throws IOException if an I/O error occurs
+     */
     public static String getBody(Config config, ClassInfo info, String Sig) throws IOException {
         MethodInfo mi = getMethodInfo(config, info, Sig);
         return mi.sourceCode;
     }
 
+    /**
+     * Export records. Export the records of the prompt information.
+     * @param promptInfo prompt information
+     * @param classInfo  class information
+     * @param attempt attempt. The number of attempts
+     */
     public void exportRecord(PromptInfo promptInfo, ClassInfo classInfo, int attempt) {
         String methodIndex = classInfo.methodSigs.get(promptInfo.methodSignature);
         Path recordPath = config.getHistoryPath();
@@ -379,6 +476,11 @@ public abstract class AbstractRunner {
         }
     }
 
+    /**
+     * Export class mapping. Export the class mapping by configuration and save path.
+     * @param config configuration
+     * @param savePath the path to save the class mapping
+     */
     public static synchronized void exportClassMapping(Config config, Path savePath) {
         if (!savePath.toFile().exists()) {
             savePath.toFile().mkdirs();
@@ -395,6 +497,11 @@ public abstract class AbstractRunner {
         }
     }
 
+    /**
+     * Export method mapping. Export the method mapping by class information
+     * @param classInfo class information
+     * @param savePath the path to save the method mapping
+     */
     public void exportMethodMapping(ClassInfo classInfo, Path savePath) {
         if (!savePath.toFile().exists()) {
             savePath.toFile().mkdirs();
@@ -420,6 +527,11 @@ public abstract class AbstractRunner {
         }
     }
 
+    /**
+     * Export attempt mapping. Export the attempt mapping by prompt information and save path.
+     * @param promptInfo prompt information
+     * @param savePath the path to save the attempt mapping
+     */
     public void exportAttemptMapping(PromptInfo promptInfo, Path savePath) {
         if (!savePath.toFile().exists()) {
             savePath.toFile().mkdirs();
@@ -450,6 +562,12 @@ public abstract class AbstractRunner {
         }
     }
 
+    /**
+     * Judge whether the prompt tokens exceed the maximum prompt tokens.
+     * @param maxPromptTokens maximum prompt tokens
+     * @param prompt prompt
+     * @return true if the prompt tokens exceed the maximum prompt tokens
+     */
     public static boolean isExceedMaxTokens(int maxPromptTokens, List<ChatMessage> prompt) {
         int count = 0;
         for (ChatMessage p : prompt) {
@@ -461,6 +579,12 @@ public abstract class AbstractRunner {
         return false;
     }
 
+    /**
+     * Judge whether the prompt tokens exceed the maximum prompt tokens.
+     * @param maxPromptTokens maximum prompt tokens
+     * @param prompt prompt
+     * @return true if the prompt tokens exceed the maximum prompt tokens
+     */
     public static boolean isExceedMaxTokens(int maxPromptTokens, String prompt) {
         int count = TokenCounter.countToken(prompt);
         if (count > maxPromptTokens) {
@@ -471,11 +595,11 @@ public abstract class AbstractRunner {
 
     /**
      * Compile and execute the test, if no errors, the test will be exported.
-     * @param config
-     * @param fullTestName
-     * @param promptInfo
-     * @param rounds
-     * @return
+     * @param config configuration
+     * @param fullTestName full test name
+     * @param promptInfo prompt information
+     * @param rounds rounds
+     * @return true if the test is successfully compiled and executed
      */
     public static boolean runTest(Config config, String fullTestName, PromptInfo promptInfo, int rounds) {
         String testName = fullTestName.substring(fullTestName.lastIndexOf(".") + 1);
@@ -547,6 +671,11 @@ public abstract class AbstractRunner {
         return true;
     }
 
+    /**
+     * Judge whether the errors are only assertion errors.
+     * @param errors Assertion errors
+     * @return true if the errors are only assertion errors
+     */
     public static boolean isOnlyAssertionError(List<String> errors) {
         for (String error : errors) {
             if (!error.toLowerCase().contains("AssertionError".toLowerCase())
@@ -557,6 +686,12 @@ public abstract class AbstractRunner {
         return true;
     }
 
+    /**
+     * Extract errors by summary. Extract the errors by the test execution summary.
+     * @param summary test execution summary
+     * @param matchName matched name
+     * @return List of errors
+     */
     public static List<String> extractErrorBySummary(TestExecutionSummary summary, String matchName) {
         List<String> errors = new ArrayList<>();
         summary.getFailures().forEach(failure -> {
@@ -571,6 +706,12 @@ public abstract class AbstractRunner {
         return errors;
     }
 
+    /**
+     * Export error. Export the error by code, errors, and output path.
+     * @param code code
+     * @param errors errors list
+     * @param outputPath output path
+     */
     public static void exportError(String code, List<String> errors, Path outputPath) {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath.toFile()));

@@ -19,18 +19,32 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import zju.cst.aces.util.Counter;
 
+/**
+ * Task is a class to generate tests for a method, a class or a project.
+ * It contains methods to start the task of generating tests for a method, a class or a project.
+ */
 public class Task {
 
     Config config;
     Logger log;
     Runner runner;
 
+    /**
+     * Constructor
+     * @param config configuration of the plugin
+     * @param runner runner to run the tests
+     */
     public Task(Config config, Runner runner) {
         this.config = config;
         this.log = config.getLogger();
         this.runner = runner;
     }
 
+    /**
+     * Start the task of generating tests for a method
+     * @param className class name
+     * @param methodName method name
+     */
     public void startMethodTask(String className, String methodName) {
         try {
             checkTargetFolder(config.getProject());
@@ -93,6 +107,10 @@ public class Task {
         log.info(String.format("\n==========================\n[%s] Generation finished", config.pluginSign));
     }
 
+    /**
+     * Start the task of generating tests for a class
+     * @param className class name
+     */
     public void startClassTask(String className) {
         try {
             checkTargetFolder(config.getProject());
@@ -115,6 +133,9 @@ public class Task {
         log.info(String.format("\n==========================\n[%s] Generation finished",config.pluginSign));
     }
 
+    /**
+     * Start the task of generating tests for the project
+     */
     public void startProjectTask() {
         Project project = config.getProject();
         try {
@@ -161,6 +182,10 @@ public class Task {
         log.info(String.format("\n==========================\n[%s] Generation finished",config.pluginSign));
     }
 
+    /**
+     * Start the task of generating tests for the project
+     * @param classPaths class paths to be processed
+     */
     public void projectJob(List<String> classPaths) {
         ExecutorService executor = Executors.newFixedThreadPool(config.getClassThreads());
         List<Future<String>> futures = new ArrayList<>();
@@ -205,6 +230,13 @@ public class Task {
         executor.shutdown();
     }
 
+    /**
+     * Get the full class name
+     * @param config configuration of the plugin
+     * @param name class name
+     * @return full class name
+     * @throws IOException
+     */
     public static String getFullClassName(Config config, String name) throws IOException {
         if (isFullName(name)) {
             return name;
@@ -230,7 +262,7 @@ public class Task {
 
     /**
      * Check if the classes is compiled
-     * @param project
+     * @param project project
      */
     public static void checkTargetFolder(Project project) {
         if (project.getPackaging().equals("pom")) {

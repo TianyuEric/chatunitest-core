@@ -5,6 +5,9 @@ import zju.cst.aces.dto.PromptInfo;
 
 import java.nio.file.Path;
 
+/**
+ * Validator is an interface to validate code.
+ */
 public interface Validator {
 
     boolean syntacticValidate(String code);

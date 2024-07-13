@@ -7,6 +7,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * SymbolFrame is a class to store the symbol information in the code
+ * It contains the class name, super name, interfaces, field definition, field use, variable definition, variable use, method definition and method use
+ * It also provides a method to merge another SymbolFrame and filter symbols by group id
+ * The group id is the owner and type of the symbol in the group
+ * The group ids are defined by the group id
+ */
 @Data
 public class SymbolFrame {
     private String className;
@@ -43,6 +50,11 @@ public class SymbolFrame {
         methodUse.add(symbol);
     }
 
+
+    /**
+     * Merge another SymbolFrame
+     * @param frame SymbolFrame
+     */
     public void merge(SymbolFrame frame) {
         if (frame == null) {
             return;
@@ -67,6 +79,10 @@ public class SymbolFrame {
         }
     }
 
+    /**
+     * Filter symbols by group id
+     * @param groupIds List<String>
+     */
     public void filterSymbolsByGroupId(List<String> groupIds) {
         if (groupIds == null || groupIds.isEmpty()) {
             return;
@@ -91,6 +107,11 @@ public class SymbolFrame {
         methodUse.removeIf(symbol -> !symbol.isInGroup(targets));
     }
 
+    /**
+     * Get all obfuscated names
+     * @param groupIds List<String>
+     * @return Set<String>
+     */
     public Set<String> toObNames(List<String> groupIds) {
         Set<String> obNames = new HashSet<>();
         if (className != null) {
@@ -129,6 +150,12 @@ public class SymbolFrame {
         return obNames;
     }
 
+    /**
+     * Split type name
+     * @param type String
+     * @param groupIds List<String>
+     * @return String
+     */
     public String splitTypeName(String type, List<String> groupIds) {
         if (type == null || type.isEmpty() || !isClassInGroup(type, groupIds)) {
             return "";
@@ -144,6 +171,12 @@ public class SymbolFrame {
         return ret;
     }
 
+    /**
+     * Check if class in group
+     * @param fullClassName String
+     * @param groupIds List<String>
+     * @return boolean
+     */
     public static boolean isClassInGroup(String fullClassName, List<String> groupIds) {
         for (String gid : groupIds) {
             if (fullClassName.contains(gid.replace(".", "/"))) {
@@ -153,6 +186,12 @@ public class SymbolFrame {
         return false;
     }
 
+    /**
+     * Check if string in group
+     * @param str String
+     * @param groupIds List<String>
+     * @return boolean
+     */
     public static boolean isInGroup(String str, List<String> groupIds) {
         for (String gid : groupIds) {
             if (str.contains(gid)) {

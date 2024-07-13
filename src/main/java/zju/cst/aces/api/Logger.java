@@ -1,5 +1,8 @@
 package zju.cst.aces.api;
 
+/**
+ * Logger is an interface to log messages.
+ */
 public interface Logger {
 
     void info(String msg);

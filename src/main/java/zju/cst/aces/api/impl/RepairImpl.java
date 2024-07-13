@@ -9,6 +9,14 @@ import zju.cst.aces.dto.PromptInfo;
 import static zju.cst.aces.runner.AbstractRunner.*;
 import static zju.cst.aces.api.impl.ChatGenerator.*;
 
+/**
+ * RepairImpl implements Repair interface
+ * The main function of this class is to repair code.
+ * It has two types of repair methods: rule based repair and LLM based repair.
+ * The rule based repair method is used to repair code based on rule.
+ * The LLM based repair method is used to repair code based on LLM.
+ * @see zju.cst.aces.api.Repair
+ */
 @Data
 public class RepairImpl implements Repair {
 
@@ -18,11 +26,21 @@ public class RepairImpl implements Repair {
 
     boolean success = false;
 
+    /**
+     * Constructor
+     * @param config config
+     * @param promptConstructorImpl prompt constructor
+     */
     public RepairImpl(Config config, PromptConstructorImpl promptConstructorImpl) {
         this.config = config;
         this.promptConstructorImpl = promptConstructorImpl;
     }
 
+    /**
+     * Repair code based on rule and return repaired code
+     * @param code code
+     * @return repaired code
+     */
     @Override
     public String ruleBasedRepair(String code) {
         code = changeTestName(code, promptConstructorImpl.getTestName());
@@ -31,6 +49,12 @@ public class RepairImpl implements Repair {
         return code;
     }
 
+    /**
+     * Repair code based on LLM and return repaired code
+     * @param code code
+     * @param rounds rounds
+     * @return repaired code
+     */
     @Override
     public String LLMBasedRepair(String code, int rounds) {
         PromptInfo promptInfo = promptConstructorImpl.getPromptInfo();
@@ -56,6 +80,11 @@ public class RepairImpl implements Repair {
         }
     }
 
+    /**
+     * Repair code based on LLM and return repaired code
+     * @param code code
+     * @return repaired code
+     */
     @Override
     public String LLMBasedRepair(String code) {
         PromptInfo promptInfo = promptConstructorImpl.getPromptInfo();

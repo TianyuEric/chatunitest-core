@@ -157,6 +157,10 @@ public class Config {
             initDefault(project);
         }
 
+        /**
+         * Initialize default configuration
+         * @param project project
+         */
         public void initDefault(Project project) {
             this.date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss")).toString();
             this.project = project;
@@ -214,6 +218,11 @@ public class Config {
             return this;
         }
 
+        /**
+         * Set test output path
+         * @param tmpOutput test output path
+         * @return ConfigBuilder
+         */
         public ConfigBuilder tmpOutput(Path tmpOutput) {
             this.tmpOutput = tmpOutput;
             Project parent = project.getParent();
@@ -265,6 +274,11 @@ public class Config {
             return this;
         }
 
+        /**
+         * Set class paths
+         * @param classPaths class paths
+         * @return ConfigBuilder
+         */
         public ConfigBuilder classPaths(List<String> classPaths) {
             this.classPaths = classPaths;
             this.validator = new ValidatorImpl(this.testOutput, this.compileOutputPath,
@@ -312,6 +326,11 @@ public class Config {
             return this;
         }
 
+        /**
+         * Load properties file
+         * @param configFile properties file
+         * @return ConfigBuilder
+         */
         public ConfigBuilder properties(String configFile) {
             try {
                 Properties properties = new Properties();
@@ -517,6 +536,10 @@ public class Config {
             this.validator = validator;
         }
 
+        /**
+         * Get symbol solver for JavaParser
+         * @return JavaSymbolSolver
+         */
         public JavaSymbolSolver getSymbolSolver() {
             CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
             combinedTypeSolver.add(new ReflectionTypeSolver());
@@ -542,6 +565,10 @@ public class Config {
             return symbolSolver;
         }
 
+        /**
+         * Build configuration
+         * @return Config
+         */
         public Config build() {
             Config config = new Config();
             config.setDate(this.date);
@@ -607,6 +634,9 @@ public class Config {
         return apiKey;
     }
 
+    /**
+     * Print configuration
+     */
     public void print() {
         logger.info("\n========================== Configuration ==========================\n");
         logger.info("PluginSign >>>>"+this.getPluginSign() );

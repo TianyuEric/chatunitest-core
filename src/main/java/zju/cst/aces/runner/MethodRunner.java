@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
+/**
+ * MethodRunner is a class to generate code from methods.
+ */
 public class MethodRunner extends ClassRunner {
 
     public MethodInfo methodInfo;
@@ -18,6 +21,13 @@ public class MethodRunner extends ClassRunner {
         this.methodInfo = methodInfo;
     }
 
+    /**
+     * Start the test program.
+     * According to the configuration, decide whether to use single-threaded or multi-threaded execution of test rounds.
+     * If the configuration is multi-threaded and not set to stop after success, use ExecutorService to manage a fixed number of thread pools.
+     * If the configuration is single-threaded or set to stop after success, execute the test rounds one by one in single-threaded mode.
+     * @throws IOException if an I/O error occurs during startup.
+     */
     @Override
     public void start() throws IOException {
         if (!config.isStopWhenSuccess() && config.isEnableMultithreading()) {
@@ -54,6 +64,13 @@ public class MethodRunner extends ClassRunner {
         }
     }
 
+    /**
+     * Starts the test rounds.
+     * Executes a series of phases including prompt generation, test generation, validation, and repair (if necessary) to complete the test rounds.
+     * If the validation passes after the repair, the test round is considered successful; otherwise, it is considered failed after attempting the maximum number of rounds.
+     * @param num The number of test rounds to execute.
+     * @return true if the test rounds are successful, otherwise false.
+     */
     public boolean startRounds(final int num) {
 
         Phase phase = new Phase(config);

@@ -17,6 +17,12 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Stream;
 
+/**
+ * ASMParser parse class file and jar file to get class nodes
+ * It also get entries from class nodes and method signatures
+ * It is used in obfuscator to get entries from class nodes and method signatures
+ * @see zju.cst.aces.api.impl.obfuscator.Obfuscator
+ */
 public class ASMParser {
 
     private final Config config;
@@ -25,18 +31,35 @@ public class ASMParser {
         this.config = config;
     }
 
+    /**
+     * Get entries from class nodes and method signatures
+     * @param classNodes class nodes
+     * @param methodSigs method signatures
+     * @return entries
+     */
     Set<String> getEntries(Set<ClassNode> classNodes, Collection<String> methodSigs) {
         Set<String> entries = new HashSet<>();
         return entries;
     }
 
+    /**
+     * Load classes from file
+     * @param classFile class file
+     * @return class nodes
+     * @throws IOException
+     */
     public Set<ClassNode> loadClasses(File classFile) throws IOException {
         Set<ClassNode> classes = new HashSet<>();
         InputStream is = new FileInputStream(classFile);
         return readClass(classFile.getName(), is, classes);
     }
 
-
+    /**
+     * Load classes from jar file
+     * @param jarFile jar file
+     * @return class nodes
+     * @throws IOException
+     */
     public Set<ClassNode> loadClasses(JarFile jarFile) throws IOException {
         Set<ClassNode> targetClasses = new HashSet<>();
         Stream<JarEntry> str = jarFile.stream();
@@ -45,7 +68,13 @@ public class ASMParser {
         return targetClasses;
     }
 
-
+    /**
+     * Read class from input stream and add to target classes
+     * @param className class name
+     * @param is input stream
+     * @param targetClasses target classes
+     * @return class nodes
+     */
     private Set<ClassNode> readClass(String className, InputStream is, Set<ClassNode> targetClasses) {
         try {
             BufferedSource source = Okio.buffer(Okio.source(is));
@@ -64,7 +93,13 @@ public class ASMParser {
         return targetClasses;
     }
 
-
+    /**
+     * Read jar file and add to target classes
+     * @param jar jar file
+     * @param entry jar entry
+     * @param targetClasses target classes
+     * @return class nodes
+     */
     private Set<ClassNode> readJar(JarFile jar, JarEntry entry, Set<ClassNode> targetClasses) {
         String name = entry.getName();
         if (name.endsWith(".class")) {
@@ -81,7 +116,11 @@ public class ASMParser {
         return targetClasses;
     }
 
-
+    /**
+     * Get class node from bytes
+     * @param bytes bytes
+     * @return class node
+     */
     private ClassNode getNode(byte[] bytes) {
         ClassReader cr = new ClassReader(bytes);
         ClassNode cn = new ClassNode();
